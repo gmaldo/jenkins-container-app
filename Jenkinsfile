@@ -13,7 +13,7 @@ pipeline {
     AZURE_CLIENT_SECRET    = credentials('azureclient_secret')
     AZURE_TENANT_ID        = '8ee9d595-4f94-41e5-a20c-b29b4e64578b'
     
-    ACR_NAME               = 'acrtfexample'
+    ACR_NAME               = 'acrtfgmaldo'
     IMAGE_NAME             = 'myapp'
     IMAGE_TAG              = 'latest'
     RESOURCE_GROUP         = 'rg-containerapp'
