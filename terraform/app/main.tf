@@ -62,10 +62,10 @@ resource "azurerm_container_app" "app" {
     identity = azurerm_user_assigned_identity.app_identity.id
   }
 
-  scale {
-    min_replicas = 1
-    max_replicas = 2
-  }
+  # scale {
+  #   min_replicas = 1
+  #   max_replicas = 2
+  # }
 
   depends_on = [azurerm_role_assignment.acr_pull]
 }
