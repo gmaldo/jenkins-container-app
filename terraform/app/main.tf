@@ -12,7 +12,7 @@ data "azurerm_resource_group" "rg" {
 }
 
 data "azurerm_container_registry" "acr" {
-  name                = "acrtfexample"
+  name                = "acrtfgmaldo"
   resource_group_name = data.azurerm_resource_group.rg.name
 }
 
