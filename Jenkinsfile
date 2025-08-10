@@ -48,7 +48,6 @@ pipeline {
     stage('Login to Azure & ACR') {
       steps {
         sh '''
-        source /opt/azenv/bin/activate
         az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
         az acr login --name $ACR_NAME
         '''
@@ -59,7 +58,6 @@ pipeline {
       steps {
         dir('docker') {
           sh '''
-          source /opt/azenv/bin/activate
           ACR_LOGIN_SERVER=$(az acr show --name $ACR_NAME --query loginServer -o tsv)
           docker build -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG .
           docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG
