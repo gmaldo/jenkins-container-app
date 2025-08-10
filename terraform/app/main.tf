@@ -15,6 +15,10 @@ data "azurerm_container_registry" "acr" {
   name                = "acrtfgmaldo"
   resource_group_name = data.azurerm_resource_group.rg.name
 }
+data "azurerm_container_app_environment" "env" {
+  name                = "${var.containerapp_name}-env"
+  resource_group_name = data.azurerm_resource_group.rg.name
+}
 
 resource "azurerm_user_assigned_identity" "app_identity" {
   name                = "my-containerapp-identity"
@@ -30,7 +34,7 @@ resource "azurerm_role_assignment" "acr_pull" {
 
 resource "azurerm_container_app" "app" {
   name                         = "my-containerapp"
-  container_app_environment_id = "/subscriptions/${var.subscription_id}/resourceGroups/${data.azurerm_resource_group.rg.name}/providers/Microsoft.App/managedEnvironments/my-containerapp-env"
+  container_app_environment_id = data.azurerm_container_app_environment.env.id//"/subscriptions/${var.subscription_id}/resourceGroups/${data.azurerm_resource_group.rg.name}/providers/Microsoft.App/managedEnvironments/my-containerapp-env"
   resource_group_name          = data.azurerm_resource_group.rg.name
   revision_mode                = "Single"
 

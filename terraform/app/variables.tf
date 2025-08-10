@@ -3,6 +3,13 @@ variable "subscription_id" {
   type        = string
 }
 
+variable "containerapp_name" {
+  default = "my-containerapp"
+}
+variable "resource_group_name" {
+  default = "rg-gmaldonado"
+}
+
 variable "client_id" {}
 variable "client_secret" {}
 variable "tenant_id" {}
