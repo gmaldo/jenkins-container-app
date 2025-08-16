@@ -108,7 +108,6 @@ docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG
 
 ### 🚀 Despliegue de Container App
 
-
 **Proceso automático**:
 
 1. Terraform crea la Container App con referencia a la imagen en ACR
@@ -190,6 +189,79 @@ dir('terraform/app') {
 - Docker
 - Jenkins con Docker disponible
 - Credenciales de Azure como secretos en Jenkins
+
+---
+
+## 🖥️ Ejecución Manual desde Línea de Comandos
+
+Si prefieres ejecutar el despliegue manualmente sin Jenkins, puedes seguir estos pasos:
+
+### 1. Configurar variables de entorno
+
+```bash
+export AZURE_SUBSCRIPTION_ID="tu-subscription-id"
+export AZURE_CLIENT_ID="tu-client-id"
+export AZURE_CLIENT_SECRET="tu-client-secret"
+export AZURE_TENANT_ID="tu-tenant-id"
+export ACR_NAME="acrtfgmaldo"
+export IMAGE_NAME="myapp"
+export IMAGE_TAG="latest"
+```
+
+### 2. Autenticación en Azure
+
+```bash
+az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+az account set --subscription $AZURE_SUBSCRIPTION_ID
+```
+
+### 3. Desplegar infraestructura base
+
+```bash
+cd terraform/infra
+terraform init
+terraform plan
+terraform apply -auto-approve
+cd ../..
+```
+
+### 4. Crear y subir imagen Docker al ACR
+
+```bash
+# Autenticarse en ACR
+az acr login --name $ACR_NAME
+
+# Obtener el login server del ACR
+ACR_LOGIN_SERVER=$(az acr show --name $ACR_NAME --query loginServer -o tsv)
+
+# Construir la imagen Docker
+cd docker
+docker build --platform=linux/amd64 -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG .
+
+# Subir imagen al ACR
+docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG
+cd ..
+```
+
+### 5. Desplegar la aplicación
+
+```bash
+cd terraform/app
+terraform init
+terraform plan
+terraform apply -auto-approve
+cd ../..
+```
+
+### 6. Obtener la URL de la aplicación
+
+```bash
+cd terraform/app
+terraform output container_app_url
+cd ../..
+```
+
+**Nota**: Este proceso manual sigue el mismo orden que el pipeline de Jenkins, asegurando que la infraestructura esté lista antes de crear la imagen Docker, y que la imagen esté disponible en ACR antes de desplegar la Container App.
 
 ---
 
