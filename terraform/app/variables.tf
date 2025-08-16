@@ -9,6 +9,9 @@ variable "containerapp_name" {
 variable "resource_group_name" {
   default = "rg-gmaldonado"
 }
+variable "acr_name" {
+  default = "acrtfgmaldo" # DEBE ser único a nivel global
+}
 
 variable "client_id" {}
 variable "client_secret" {}

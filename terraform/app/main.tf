@@ -12,7 +12,7 @@ data "azurerm_resource_group" "rg" {
 }
 
 data "azurerm_container_registry" "acr" {
-  name                = "acrtfgmaldo"
+  name                = var.acr_name
   resource_group_name = data.azurerm_resource_group.rg.name
 }
 data "azurerm_container_app_environment" "env" {
@@ -21,19 +21,19 @@ data "azurerm_container_app_environment" "env" {
 }
 
 resource "azurerm_user_assigned_identity" "app_identity" {
-  name                = "my-containerapp-identity"
+  name                = "${var.containerapp_name}-identity"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
 }
 
-resource "azurerm_role_assignment" "acr_pull" {
+resource "azurerm_role_assignment" "pull_acr" {
   principal_id         = azurerm_user_assigned_identity.app_identity.principal_id
   role_definition_name = "AcrPull"
   scope                = data.azurerm_container_registry.acr.id
 }
 
 resource "azurerm_container_app" "app" {
-  name                         = "my-containerapp"
+  name                         = var.containerapp_name
   container_app_environment_id = data.azurerm_container_app_environment.env.id//"/subscriptions/${var.subscription_id}/resourceGroups/${data.azurerm_resource_group.rg.name}/providers/Microsoft.App/managedEnvironments/my-containerapp-env"
   resource_group_name          = data.azurerm_resource_group.rg.name
   revision_mode                = "Single"
@@ -71,5 +71,5 @@ resource "azurerm_container_app" "app" {
   #   max_replicas = 2
   # }
 
-  depends_on = [azurerm_role_assignment.acr_pull]
+  depends_on = [azurerm_role_assignment.pull_acr]
 }
